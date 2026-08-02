@@ -38,10 +38,7 @@ class SampleCollection(Document):
 					if not any((comp["status"] == "Open") for comp in component_observations):
 						obs.status = "Collected"
 
-		if not any((obs.get("status") == "Open") for obs in self.observation_sample_collection):
-			self.status = "Collected"
-		else:
-			self.status = "Partly Collected"
+		self.status = get_collection_status(self.observation_sample_collection)
 
 	# def before_submit(self):
 	# 	if [sample for sample in self.observation_sample_collection if sample.status != "Collected"]:
@@ -202,6 +199,102 @@ def insert_observation(selected, sample_collection, component_observations=None,
 	except Exception as e:
 		frappe.log_error(message=e, title="Failed to mark Collected!")
 
+<<<<<<< HEAD
+=======
+
+def collect_components(context, obs):
+	context.component_observations = json.loads(obs.get("component_observations"))
+	for j, comp in enumerate(context.component_observations):
+		specimen = context.comp_obs_ref.get(j + 1) or context.comp_obs_ref.get(obs.get("name"))
+		observation = add_observation(
+			patient=context.sample_col.get("patient"),
+			template=comp.get("observation_template"),
+			doc="Sample Collection",
+			docname=context.sample_collection,
+			parent=obs.get("component_observation_parent"),
+			specimen=specimen,
+			invoice=invoice(context),
+			practitioner=context.sample_col.get("referring_practitioner"),
+			child=obs.get("reference_child") or "",
+			service_request=obs.get("service_request"),
+		)
+		if observation:
+			comp["status"] = "Collected"
+			comp["collection_date_time"] = now_datetime()
+			comp["specimen"] = specimen
+
+	frappe.db.set_value(
+		"Observation Sample Collection",
+		obs.get("name"),
+		{
+			"collection_date_time": now_datetime(),
+			"component_observations": json.dumps(context.component_observations, default=str),
+			"status": "Collected",
+			"specimen": context.comp_obs_ref.get(j + 1) or context.comp_obs_ref.get(obs.get("name")),
+		},
+	)
+
+
+def mark_matching_components(context, obs):
+	if not context.component_observations:
+		return
+	for j, comp in enumerate(context.component_observations):
+		if comp.get("observation_template") == obs.get("observation_template"):
+			comp["status"] = "Collected"
+			comp["collection_date_time"] = now_datetime()
+			comp["specimen"] = context.comp_obs_ref.get(j + 1)
+
+
+def update_child_status(context):
+	child_values = {"component_observations": json.dumps(context.component_observations, default=str)}
+	# Mark the child row Collected once none of its components are still Open.
+	if context.component_observations and not any(
+		comp["status"] == "Open" for comp in context.component_observations
+	):
+		child_values["status"] = "Collected"
+
+	if context.child_name:
+		frappe.db.set_value("Observation Sample Collection", context.child_name, child_values)
+
+
+def update_collection_status(context):
+	if not context.sample_collection:
+		return
+	child_rows = frappe.db.get_all(
+		"Observation Sample Collection",
+		{"parent": context.sample_collection},
+		["status"],
+	)
+	status = get_collection_status(child_rows)
+	frappe.db.set_value("Sample Collection", context.sample_collection, "status", status)
+
+
+def get_collection_status(child_rows):
+	if not child_rows:
+		return "Pending"
+	if all(row.get("status") == "Collected" for row in child_rows):
+		return "Collected"
+	if all(row.get("status") == "Open" for row in child_rows):
+		return "Pending"
+	return "Partly Collected"
+
+
+def parent_observation(context, obs):
+	if context.child_name:
+		return frappe.db.get_value(
+			"Observation Sample Collection", context.child_name, "component_observation_parent"
+		)
+	return obs.get("component_observation_parent")
+
+
+def invoice(context):
+	if context.sample_col.reference_doc == "Sales Invoice":
+		return context.sample_col.get("reference_name")
+	return None
+
+
+def publish_progress(sample_collection):
+>>>>>>> 7efd0d1 (fix(sample-collection): set status to Pending when no samples are collected)
 	frappe.publish_realtime(
 		event="observation_creation_progress",
 		message="Completed",
