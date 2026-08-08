@@ -575,6 +575,7 @@ def get_unbilled_inpatient_docs(doc, inpatient_record):
 	if doc in ["Lab Test", "Clinical Procedure"]:
 		filters.update(
 			{
+				"docstatus": ["<", 2],
 				"service_request": "",
 			}
 		)
