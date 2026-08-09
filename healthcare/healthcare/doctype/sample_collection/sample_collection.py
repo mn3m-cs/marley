@@ -199,8 +199,6 @@ def insert_observation(selected, sample_collection, component_observations=None,
 	except Exception as e:
 		frappe.log_error(message=e, title="Failed to mark Collected!")
 
-<<<<<<< HEAD
-=======
 
 def collect_components(context, obs):
 	context.component_observations = json.loads(obs.get("component_observations"))
@@ -292,7 +290,6 @@ def invoice(context):
 
 
 def publish_progress(sample_collection):
->>>>>>> 7efd0d1 (fix(sample-collection): set status to Pending when no samples are collected)
 	frappe.publish_realtime(
 		event="observation_creation_progress",
 		message="Completed",
