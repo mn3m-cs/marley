@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ boot.lang }}" dir="{{ boot.direction }}">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ _("Patient Portal") }}</title>
+    <title>Patient Portal</title>
   </head>
   <body>
     <div id="app"></div>
@@ -12,7 +12,6 @@
     <div id="popovers"></div>
 
     <script> window.csrf_token = '{{ csrf_token }}'; </script>
-    <script> window.translated_messages = {{ boot.translated_messages | tojson }}; </script>
     <script type="module" src="/src/patient_portal.js"></script>
   </body>
 </html>

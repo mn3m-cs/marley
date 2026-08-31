@@ -4,12 +4,9 @@
 import frappe
 from frappe import _
 from frappe.utils import cint, get_system_timezone
-from frappe.translate import get_all_translations
 from frappe.utils.telemetry import capture
 
 no_cache = 1
-
-RTL_LANGUAGES = ("ar", "he", "fa", "ur")
 
 
 def get_context():
@@ -28,7 +25,6 @@ def get_context_for_dev():
 
 
 def get_boot():
-	lang = frappe.local.lang or "en"
 	return frappe._dict(
 		{
 			"frappe_version": frappe.__version__,
@@ -36,9 +32,6 @@ def get_boot():
 			"site_name": frappe.local.site,
 			"read_only_mode": frappe.flags.read_only,
 			"csrf_token": frappe.sessions.get_csrf_token(),
-			"lang": lang,
-			"direction": "rtl" if lang in RTL_LANGUAGES else "ltr",
-			"translated_messages": get_all_translations(lang),
 			"setup_complete": cint(frappe.get_system_settings("setup_complete")),
 			"sysdefaults": frappe.defaults.get_defaults(),
 			"timezone": {
