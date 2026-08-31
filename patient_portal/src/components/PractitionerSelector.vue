@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col h-[99%] animate-fade-in">
 		<div class="flex items-center justify-between py-4">
-			<h2 class="text-md font-semibold py-2">Select a Practitioner</h2>
+			<h2 class="text-md font-semibold py-2">{{ __('Select a Practitioner') }}</h2>
 
 			<!-- Pagination -->
 			<div class="flex items-center gap-2">

@@ -3,7 +3,7 @@
 		size: '6xl',
 	}" :disable-outside-click-to-close="true">
 		<template #body-title>
-			<h3 class="text-ink-gray-8">Book an Appointment</h3>
+			<h3 class="text-ink-gray-8">{{ __('Book an Appointment') }}</h3>
 		</template>
 		<template #body-content>
 			<div class="flex flex-col h-[65vh] border-b">
@@ -64,7 +64,7 @@
 
 							<div class="flex items-center w-full py-5">
 								<div class="flex-grow border-t border-gray-200"></div>
-								<span class="mx-3 text-xs text-gray-400 uppercase tracking-wider">For Patient</span>
+								<span class="mx-3 text-xs text-gray-400 uppercase tracking-wider">{{ __('For Patient') }}</span>
 								<div class="flex-grow border-t border-gray-200"></div>
 							</div>
 
@@ -73,7 +73,7 @@
 									v-model="selectedPatient"
 									type="autocomplete"
 									:options="patientOptions"
-									:placeholder="'Choose a patient'"
+									:placeholder="__('Choose a patient')"
 									size="lg"
 									:disabled="patientOptions.length == 1"
 								/>
@@ -89,7 +89,7 @@
 						<div class="flex flex-col items-center justify-center h-full min-h-[350px]">
 							<div class="flex flex-col items-center justify-center w-full max-w-md">
 								<div v-if="slots && slots.length > 0" class="flex flex-col items-center py-3 px-4">
-									<h3 class="text-md font-semibold mb-3 text-center">Available Slots</h3>
+									<h3 class="text-md font-semibold mb-3 text-center">{{ __('Available Slots') }}</h3>
 									<div class="flex justify-center mb-2 w-full">
 										<Select
 											:options="timezones"
@@ -100,7 +100,7 @@
 								</div>
 
 								<div v-else class="flex items-center justify-center text-gray-500 text-sm h-24">
-									No slots available
+									{{ __('No slots available') }}
 								</div>
 
 								<!-- Scrollable slots list -->
@@ -140,7 +140,7 @@
 					</div>
 					<div v-if="success" class="flex flex-col items-center justify-center h-[99%] text-center space-y-4 animate-fade-in">
 						<FeatherIcon name="check-circle" class="text-green-500 w-20 h-20" />
-						<h2 class="text-xl font-semibold text-gray-800">Payment Successful</h2>
+						<h2 class="text-xl font-semibold text-gray-800">{{ __('Payment Successful') }}</h2>
 						<p class="text-gray-600">Your appointment with {{ selectedPractitioner.practitioner_name }} has been confirmed.</p>
 					</div>
 				</div>
@@ -158,7 +158,7 @@
 					variant="subtle"
 					@click="goToPrevious()"
 				>
-					Previous
+					{{ __('Previous') }}
 				</Button>
 				<Button
 					v-if="!show_calendar && !booked && !success"
@@ -167,7 +167,7 @@
 					variant="solid"
 					@click="goToNext()"
 				>
-					Next
+					{{ __('Next') }}
 				</Button>
 				<Button
 					v-if="show_calendar && !booked && !success"
@@ -177,7 +177,7 @@
 					:loading="bookingLoading"
 					@click="bookSlot()"
 				>
-					Book
+					{{ __('Book') }}
 				</Button>
 				<Button
 					v-if="booked && !success"
@@ -193,7 +193,7 @@
 					variant="solid"
 					@click="reload_appointments"
 				>
-					Close
+					{{ __('Close') }}
 				</Button>
 			</div>
 		</template>
@@ -210,7 +210,7 @@
 			},
 			actions: [
 				{
-					label: 'OK',
+					label: __('OK'),
 					variant: 'solid',
 				},
 			],
