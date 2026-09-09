@@ -171,7 +171,7 @@ class PatientHistory {
 			if (data[i].reference_doctype) {
 				let label = "";
 				if (data[i].subject) {
-					label += "<br/>" + data[i].subject;
+					label += data[i].subject;
 				}
 				data[i] = this.add_date_separator(data[i]);
 
@@ -187,7 +187,7 @@ class PatientHistory {
 					? `${data[i].practitioner} `
 					: ``;
 				time_line_heading +=
-					data[i].reference_doctype +
+					__(data[i].reference_doctype) +
 					" - " +
 					`<a onclick="frappe.set_route('Form', '${data[i].reference_doctype}', '${data[i].reference_name}');">
 						${data[i].reference_name}
@@ -196,16 +196,21 @@ class PatientHistory {
 				details += `
 					<div data-toggle='pill' class='patient_doc_menu'
 						data-doctype='${data[i].reference_doctype}' data-docname='${data[i].reference_name}'>
-						<div class='col-sm-12 d-flex border-bottom py-3'>`;
+						<div class='patient_doc_row d-flex border-bottom py-3'>`;
 
 				if (data[i].imgsrc) {
-					details += `<span class='mr-3 avatar avatar-small' style='width:32px; height:32px;'>
+					details += `<span class='avatar avatar-small' style='width:32px; height:32px;'>
 							<img class='avatar-frame' src='${data[i].imgsrc}' width='32' height='32'></img>
 						</span>`;
 				} else {
-					details += `<span class='mr-3 avatar avatar-small' style='width:32px; height:32px;'>
+					details += `<span class='avatar avatar-small' style='width:32px; height:32px;'>
 						<div align='center' class='avatar-frame' style='background-color: #fafbfc;'>
-							${data[i].practitioner ? data[i].practitioner.charAt(0) : "U"}
+							${frappe.utils.escape_html(
+							(data[i].practitioner ||
+								frappe.user_info(data[i].owner).fullname ||
+								data[i].owner ||
+								"?").charAt(0).toUpperCase(),
+						)}
 						</div>
 					</span>`;
 				}
@@ -220,10 +225,9 @@ class PatientHistory {
 									${data[i].date_sep}
 								</span>
 						</div>
-						<div class='frappe-card p-5 mt-3'>
+						<div class='frappe-card p-3 mt-2'>
 							<span class='${data[i].reference_name} document-id'>${label}
-							<br>
-								<div align='center'>
+								<div class='patient_doc_toggle'>
 									<a class='btn octicon octicon-chevron-down btn-default btn-xs btn-more'
 										data-doctype='${data[i].reference_doctype}' data-docname='${data[i].reference_name}'>
 									</a>
@@ -354,7 +358,7 @@ class PatientHistory {
 
 				if (details) {
 					details =
-						`<div style='font-size:13px;' align='left'>` +
+						`<div class='patient-details-body'>` +
 						details +
 						`</div>`;
 				}
@@ -429,8 +433,7 @@ class PatientHistory {
 									.find(".document-html")
 									.html(
 										`${r.message.html}
-									<br>
-										<div align='center'>
+										<div class='patient_doc_toggle'>
 											<a class='btn octicon octicon-chevron-up btn-default btn-xs btn-less'
 												data-doctype='${doctype}'
 												data-docname='${docname}'>
